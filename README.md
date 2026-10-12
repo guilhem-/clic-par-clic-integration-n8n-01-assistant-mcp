@@ -132,7 +132,8 @@ Côté n8n, chaque appel d'outil est une exécution du workflow (onglet **Execut
 
 ## Série
 
-- Module suivant : **La validation par le manager** (nœud Wait, formulaire, canal Open WebUI).
+- Module suivant : **La validation par le manager** (nœud Wait, formulaire, canal Open WebUI) :
+  [`clic-par-clic-integration-n8n-02-validation-manager`](https://github.com/guilhem-/clic-par-clic-integration-n8n-02-validation-manager).
 - Pour aller plus loin avec chaque logiciel : séries « Clic par clic » Open WebUI et n8n.
 
 ## Licence
