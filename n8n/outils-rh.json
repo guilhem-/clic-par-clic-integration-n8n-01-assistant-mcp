@@ -1,0 +1,173 @@
+{
+  "name": "Outils RH pour Open WebUI",
+  "nodes": [
+    {
+      "parameters": {
+        "authentication": "bearerAuth",
+        "path": "conges"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "4d1f4001-f960-4241-89c6-71632051b5c8",
+      "name": "MCP Server Trigger",
+      "webhookId": "b1662c7a-ff86-4637-9f46-a03e93e43b68",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "${ID_IDENTIFIANT}",
+          "name": "Jeton Open WebUI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Liste les congés déjà posés par l'utilisateur connecté : dates, nombre de jours, statut.",
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "${ID_TABLE}",
+          "mode": "list",
+          "cachedResultName": "Congés"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "email",
+              "keyValue": "={{ $json.headers['x-utilisateur-email'] }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.dataTableTool",
+      "typeVersion": 1.1,
+      "position": [
+        96,
+        208
+      ],
+      "id": "a6ff1059-a31c-4d39-8ffd-26ec982da15f",
+      "name": "consulter_conges"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Enregistre une demande de congé pour l'utilisateur connecté. Dates au format AAAA-MM-JJ, nombre de jours ouvrés.",
+        "dataTableId": {
+          "__rl": true,
+          "value": "${ID_TABLE}",
+          "mode": "list",
+          "cachedResultName": "Congés"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "email": "={{ $json.headers['x-utilisateur-email'] }}",
+            "debut": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('debut', ``, 'string') }}",
+            "fin": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('fin', ``, 'string') }}",
+            "jours": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('jours', ``, 'string') }}",
+            "statut": "En attente"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "debut",
+              "displayName": "debut",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "fin",
+              "displayName": "fin",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "jours",
+              "displayName": "jours",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "statut",
+              "displayName": "statut",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTableTool",
+      "typeVersion": 1.1,
+      "position": [
+        192,
+        304
+      ],
+      "id": "c5623cba-da00-4ccf-a751-983a4cf42976",
+      "name": "poser_conge"
+    }
+  ],
+  "connections": {
+    "consulter_conges": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "poser_conge": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataSuccessExecution": "all"
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

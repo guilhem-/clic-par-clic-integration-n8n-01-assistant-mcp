@@ -1,0 +1,16 @@
+{
+  "id": "assistant-conges",
+  "name": "Assistant congés",
+  "base_model_id": "${MODELE_BASE}",
+  "meta": {
+    "description": "Consulte et pose les congés de l'utilisateur connecté, dans n8n.",
+    "toolIds": ["server:mcp:rh"],
+    "capabilities": { "builtin_tools": false, "citations": true, "status_updates": true }
+  },
+  "params": {
+    "function_calling": "native",
+    "system": "Tu es l'assistant congés de la Société Exemple. Utilise tes outils pour consulter ou poser les congés de l'utilisateur. Tu ne peux agir que pour l'utilisateur connecté. Nous sommes le vendredi 9 octobre 2026. Réponds en français, brièvement."
+  },
+  "access_grants": [{ "principal_type": "user", "principal_id": "*", "permission": "read" }],
+  "is_active": true
+}

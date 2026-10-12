@@ -1,0 +1,28 @@
+{
+  "url": "http://n8n.n8n.svc.cluster.local:5678/mcp/conges",
+  "path": "openapi.json",
+  "type": "mcp",
+  "auth_type": "bearer",
+  "headers": {
+    "X-Utilisateur-Email": "{{USER_EMAIL}}"
+  },
+  "key": "${JETON_MCP}",
+  "config": {
+    "enable": true,
+    "function_name_filter_list": "",
+    "access_grants": [
+      {
+        "principal_type": "user",
+        "principal_id": "*",
+        "permission": "read"
+      }
+    ]
+  },
+  "info": {
+    "id": "rh",
+    "name": "n8n RH",
+    "description": ""
+  },
+  "spec_type": "url",
+  "spec": ""
+}
