@@ -24,6 +24,7 @@ Contenu, à l'état montré en fin de vidéo :
 |---|---|
 | `n8n/outils-rh.json` | Le workflow « Outils RH pour Open WebUI », exporté : déclencheur **MCP Server Trigger** (authentification Bearer, chemin `conges`) et deux outils **Data table Tool**. `consulter_conges` lit les lignes dont `email` vaut `{{ $json.headers['x-utilisateur-email'] }}` ; `poser_conge` insère une ligne avec ce même e-mail, les dates et le nombre de jours remplis par le modèle (`$fromAI`), le statut imposé « En attente ». Les identifiants propres à votre instance sont remplacés par `${ID_IDENTIFIANT}` et `${ID_TABLE}` |
 | `n8n/conges.csv` | Les données d'exemple de la table « Congés » (colonnes `email`, `debut`, `fin`, `jours`, `statut`) |
+| `n8n/outils-vus-par-le-modele.json` | Ce que le modèle reçoit : la réponse du serveur MCP à `tools/list` (écrite par `python installer.py --outils`). `consulter_conges` n'a aucun paramètre, `poser_conge` n'en a que trois (`debut`, `fin`, `jours`) : aucun champ e-mail |
 | `open-webui/connexion-rh.json` | La connexion MCP « n8n RH » telle qu'Open WebUI l'enregistre : adresse interne de n8n, authentification Bearer (clé remplacée par `${JETON_MCP}`), en-tête `X-Utilisateur-Email: {{USER_EMAIL}}`, accès ouvert à tous les utilisateurs |
 | `open-webui/assistant-conges.json` | Le modèle « Assistant congés » : consignes, outil `n8n RH`, appel de fonction natif, outils intégrés désactivés |
 | `installer.py` | Tout ce qui précède, par l'API de n8n et celle d'Open WebUI (`--retirer` pour revenir en arrière) |
@@ -103,6 +104,7 @@ dans chaque nœud.
 cp .env.example .env     # N8N_URL, N8N_EMAIL, N8N_MOT_DE_PASSE, N8N_INTERNE, OWUI_URL, OWUI_JETON, MODELE_BASE
 python installer.py      # identifiant, table, workflow publié ; connexion et modèle dans Open WebUI
 python installer.py --retirer
+python installer.py --outils    # réécrit n8n/outils-vus-par-le-modele.json (N8N_URL, JETON_MCP)
 ```
 
 Sans `JETON_MCP`, le script tire un jeton au hasard et le pose des deux côtés. Côté n8n, il

@@ -12,6 +12,7 @@ Côté Open WebUI (API, jeton administrateur OWUI_JETON) :
 Usage :
   python installer.py              # installe (ce qui existe déjà sous le même nom est remplacé)
   python installer.py --retirer    # retire tout ce qui précède
+  python installer.py --outils     # écrit n8n/outils-vus-par-le-modele.json : réponse du serveur MCP à tools/list
 
 Réglages : fichier .env (voir .env.example) ; les variables d'environnement l'emportent.
 Aucune dépendance : Python 3.10 ou plus récent, bibliothèque standard seulement.
@@ -169,7 +170,41 @@ def installer_owui(jeton: str):
     print("  Redémarrez Open WebUI (ou rechargez la page) pour que l'éditeur de modèles voie la nouvelle connexion.")
 
 
+def outils():
+    """Ce que reçoit le modèle : la liste des outils du serveur MCP (tools/list), vue depuis le poste."""
+    url = R["N8N_URL"].rstrip("/") + "/mcp/conges"
+    session = {}
+
+    def rpc(methode, params, ident=None):
+        corps = {"jsonrpc": "2.0", "method": methode, "params": params, **({"id": ident} if ident else {})}
+        entetes = {"Content-Type": "application/json", "Accept": "application/json, text/event-stream",
+                   "Authorization": f"Bearer {R['JETON_MCP']}", **session}
+        req = urllib.request.Request(url, data=json.dumps(corps).encode(), method="POST", headers=entetes)
+        with urllib.request.urlopen(req, timeout=30) as rep:
+            if rep.headers.get("mcp-session-id"):
+                session["mcp-session-id"] = rep.headers["mcp-session-id"]
+            texte = rep.read().decode()
+        # Réponse en flux d'événements (SSE) : la ligne « data: » porte le message JSON-RPC.
+        for ligne in texte.splitlines():
+            if ligne.startswith("data:"):
+                return json.loads(ligne[5:])
+        return json.loads(texte) if texte.strip() else None
+
+    rpc("initialize", {"protocolVersion": "2025-03-26", "capabilities": {}, "clientInfo": {"name": "installer", "version": "1"}}, 1)
+    rpc("notifications/initialized", {})
+    liste = rpc("tools/list", {}, 2)["result"]["tools"]
+    liste.sort(key=lambda t: t["name"])
+    sortie = ICI / "n8n" / "outils-vus-par-le-modele.json"
+    sortie.write_text(json.dumps({"tools": liste}, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    print(f"  {len(liste)} outils écrits dans {sortie.relative_to(ICI)}")
+
+
 def main():
+    if "--outils" in sys.argv:
+        if not R.get("N8N_URL") or not R.get("JETON_MCP"):
+            sys.exit("Réglages manquants (.env) : N8N_URL, JETON_MCP")
+        outils()
+        return
     manque = [c for c in ("N8N_URL", "N8N_EMAIL", "N8N_MOT_DE_PASSE", "OWUI_URL", "OWUI_JETON") if not R.get(c)]
     if "--retirer" not in sys.argv and not R.get("MODELE_BASE"):
         manque.append("MODELE_BASE")

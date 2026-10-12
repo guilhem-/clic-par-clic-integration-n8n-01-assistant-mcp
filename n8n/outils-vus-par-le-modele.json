@@ -1,0 +1,39 @@
+{
+  "tools": [
+    {
+      "name": "consulter_conges",
+      "description": "Liste les congés déjà posés par l'utilisateur connecté : dates, nombre de jours, statut.",
+      "inputSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {},
+        "additionalProperties": true
+      }
+    },
+    {
+      "name": "poser_conge",
+      "description": "Enregistre une demande de congé pour l'utilisateur connecté. Dates au format AAAA-MM-JJ, nombre de jours ouvrés.",
+      "inputSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "debut": {
+            "type": "string"
+          },
+          "fin": {
+            "type": "string"
+          },
+          "jours": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "debut",
+          "fin",
+          "jours"
+        ],
+        "additionalProperties": true
+      }
+    }
+  ]
+}
